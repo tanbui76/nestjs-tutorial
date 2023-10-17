@@ -12,7 +12,8 @@ import {
 import { IsNotEmpty } from 'class-validator';
 import { UsersService } from './users.service';
 import { UserDTO } from './user.model';
-
+import { NotNullPipe } from 'src/pipes/NotNullPipe';
+import { get } from 'http';
 @Controller("users")
 export class UsersController {
   constructor(private readonly UserService: UsersService) { }
@@ -29,9 +30,13 @@ export class UsersController {
     return this.UserService.registerUser(UserDTO);
   }
 
+  @Get()
+  getAllUsers() {
+    return this.UserService.getAllUsers();
+  }
 
   @Post("login")
-  loginUsers(@Body('username') username: string, @Body('password') password) {
+  loginUsers(@Body('username', NotNullPipe) username: string, @Body('password', NotNullPipe) password) {
     return this.UserService.loginUsers(username, password);
   }
 

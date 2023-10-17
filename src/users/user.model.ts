@@ -24,7 +24,6 @@ export class User extends mongoose.Document {
 export const UserSchema = SchemaFactory.createForClass(User);
 export class UserDTO {
     @IsNotEmpty()
-    @IsEmail()
     username: string;
 
     @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/g)

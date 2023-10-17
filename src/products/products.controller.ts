@@ -9,21 +9,34 @@ import {
 } from '@nestjs/common';
 
 import { ProductsService } from './products.service';
+import { NotNullPipe } from 'src/pipes/NotNullPipe';
+import { ProductDTO } from 'src/products/product.model'
 
 @Controller('products')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) { }
 
+    // @Post()
+    // async addProduct(
+    //     @Body('title') prodTitle: string,
+    //     @Body('description') prodDesc: string,
+    //     @Body('price') prodPrice: number,
+    // ) {
+    //     const generatedId = await this.productsService.insertProduct(
+    //         prodTitle,
+    //         prodDesc,
+    //         prodPrice,
+    //     );
+    //     return { id: generatedId, message: 'Add successfully!' };
+    // }
+
+
     @Post()
     async addProduct(
-        @Body('title') prodTitle: string,
-        @Body('description') prodDesc: string,
-        @Body('price') prodPrice: number,
+        @Body() ProductDTO: ProductDTO,
     ) {
         const generatedId = await this.productsService.insertProduct(
-            prodTitle,
-            prodDesc,
-            prodPrice,
+            ProductDTO
         );
         return { id: generatedId, message: 'Add successfully!' };
     }
@@ -38,23 +51,21 @@ export class ProductsController {
     }
 
     @Get(':id')
-    getProduct(@Param('id') prodId: string) {
+    getProduct(@Param('id', NotNullPipe) prodId: string) {
         return this.productsService.getSingleProduct(prodId);
     }
 
     @Patch(':id') // Patch sử dụng để update một phần của resource
     async updateProduct(
-        @Param('id') prodId: string,
-        @Body('title') prodTitle: string,
-        @Body('description') prodDesc: string,
-        @Body('price') prodPrice: number,
+        @Param('id', NotNullPipe) prodId: string,
+        @Body() ProductDTO: ProductDTO,
     ) {
-        await this.productsService.updateProduct(prodId, prodTitle, prodDesc, prodPrice);
+        await this.productsService.updateProduct(ProductDTO, prodId);
         return { message: 'Update successfully!' };
     }
 
     @Delete(':id')
-    async removeProduct(@Param('id') prodId: string) {
+    async removeProduct(@Param('id', NotNullPipe) prodId: string) {
         await this.productsService.deleteProduct(prodId);
         return { message: 'Delete successfully!' };
     }

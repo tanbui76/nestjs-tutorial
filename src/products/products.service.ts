@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IsNotEmpty, IsNumberString } from 'class-validator';
 
-import { Product } from './product.model';
+import { Product, ProductDTO } from './product.model';
 
 @Injectable()
 export class ProductsService {
@@ -11,10 +11,11 @@ export class ProductsService {
         @InjectModel('Product') private readonly productModel: Model<Product>,
     ) { }
 
-    async insertProduct(title: string, desc: string, price: number) {
+    async insertProduct(ProductDTO: ProductDTO) {
+        const { title, description, price } = ProductDTO;
         const newProduct = new this.productModel({
             title,
-            description: desc,
+            description,
             price,
         });
         const result = await newProduct.save();
@@ -42,18 +43,36 @@ export class ProductsService {
         };
     }
 
+    // async updateProduct(
+    //     productId: string,
+    //     title: string,
+    //     desc: string,
+    //     price: number,
+    // ) {
+    //     const updatedProduct = await this.findProduct(productId);
+    //     if (title) {
+    //         updatedProduct.title = title;
+    //     }
+    //     if (desc) {
+    //         updatedProduct.description = desc;
+    //     }
+    //     if (price) {
+    //         updatedProduct.price = price;
+    //     }
+    //     updatedProduct.save();
+    // }
+
     async updateProduct(
-        productId: string,
-        title: string,
-        desc: string,
-        price: number,
+        ProductDTO: ProductDTO, productId: string,
     ) {
+
+        const { title, description, price } = ProductDTO;
         const updatedProduct = await this.findProduct(productId);
         if (title) {
             updatedProduct.title = title;
         }
-        if (desc) {
-            updatedProduct.description = desc;
+        if (description) {
+            updatedProduct.description = description;
         }
         if (price) {
             updatedProduct.price = price;

@@ -43,4 +43,13 @@ export class UsersService {
     const result = await this.userModel.deleteOne({ _id: userId }).exec();
     return result;
   }
+
+  async getAllUsers() {
+    const users = await this.userModel.find().exec();
+    return users.map(user => ({
+      id: user._id,
+      username: user.username,
+      password: user.password
+    }));
+  }
 }
