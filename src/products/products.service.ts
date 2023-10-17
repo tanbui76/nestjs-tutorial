@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 import { Product } from './product.model';
 
@@ -17,14 +18,14 @@ export class ProductsService {
             price,
         });
         const result = await newProduct.save();
-        return result.id as string;
+        return result._id;
     }
 
     async getProducts() {
         const products = await this.productModel.find().exec();
 
         return products.map(prod => ({
-            id: prod.id,
+            id: prod._id,
             title: prod.title,
             description: prod.description,
             price: prod.price,
@@ -34,7 +35,7 @@ export class ProductsService {
     async getSingleProduct(productId: string) {
         const product = await this.findProduct(productId);
         return {
-            id: product.id,
+            id: product._id,
             title: product.title,
             description: product.description,
             price: product.price,
@@ -66,10 +67,11 @@ export class ProductsService {
 
     }
 
-    private async findProduct(id: string): Promise<Product> {
+    async findProduct(id: string): Promise<Product> {
         let product;
         try {
             product = await this.productModel.findById(id).exec();
+            // console.log(product.to);
         } catch (error) {
             throw new NotFoundException('Could not find product.');
         }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { User } from './user.model';
+import { User, UserDTO } from './user.model';
 @Injectable()
 export class UsersService {
 
@@ -10,14 +10,25 @@ export class UsersService {
 
   }
 
-  async registerUser(username: string, password: string) {
+  // async registerUser(username: string, password: string) {
+  //   const newUser = new this.userModel({
+  //     username,
+  //     password
+  //   });
+  //   const result = await newUser.save();
+  //   return result.id as string;
+  // }
+
+
+  async registerUser(UserDTO: UserDTO) {
+    const { username, password } = UserDTO;
     const newUser = new this.userModel({
       username,
       password
     });
     const result = await newUser.save();
     return result.id as string;
-  }
+  } // Có pipe validation
 
   async loginUsers(username: string, password: string) {
     const getUser = await this.userModel.findOne({ username: username, password: password });
